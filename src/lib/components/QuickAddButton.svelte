@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { Plus } from '$lib/components/icons';
+	import { FAB, Button } from '$lib/components';
+	import { getTodayJST } from '$lib/utils/timezone';
 
 	let showModal = $state(false);
 	let inputMethod = $state('date-duration');
@@ -12,20 +15,9 @@
 
 <!-- Floating Action Button -->
 {#if !showModal}
-	<button
-		onclick={() => (showModal = true)}
-		class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all hover:scale-110 z-50"
-		aria-label="Quick add activity"
-	>
-		<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M12 4v16m8-8H4"
-			></path>
-		</svg>
-	</button>
+	<FAB onclick={() => (showModal = true)} aria-label="Quick add activity">
+		<Plus class="w-6 h-6" />
+	</FAB>
 {/if}
 
 <!-- Quick Add Modal -->
@@ -102,7 +94,7 @@
 								id="quick-date"
 								name="date"
 								required
-								value={new Date().toISOString().split('T')[0]}
+								value={getTodayJST()}
 								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 							/>
 						</div>
@@ -221,19 +213,12 @@
 					</div>
 
 					<div class="mt-5 grid grid-cols-2 gap-3">
-						<button
-							type="button"
-							onclick={closeModal}
-							class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
-						>
+						<Button variant="secondary" type="button" onclick={closeModal} class="inline-flex justify-center">
 							Cancel
-						</button>
-						<button
-							type="submit"
-							class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
-						>
+						</Button>
+						<Button type="submit" class="inline-flex justify-center">
 							Add Activity
-						</button>
+						</Button>
 					</div>
 				</form>
 			</div>

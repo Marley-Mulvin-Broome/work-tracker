@@ -1,29 +1,10 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
+	import { formatHours, formatDate, formatTime } from '$lib/utils/formatters';
+	import { ArrowLeft, Clock, BarChart, Calendar, TrendUp, TrendDown, Minus } from '$lib/components/icons';
+	import { Link } from '$lib/components';
 
 	let { data }: PageProps = $props();
-
-	function formatHours(hours: number): string {
-		if (hours === 0) return '0h';
-		const h = Math.floor(hours);
-		const m = Math.round((hours - h) * 60);
-		if (m === 0) return `${h}h`;
-		return `${h}h ${m}m`;
-	}
-
-	function formatDate(dateStr: string): string {
-		const date = new Date(dateStr + 'T00:00:00');
-		return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-	}
-
-	function formatTime(timeStr: string | null): string {
-		if (!timeStr) return '-';
-		const [hours, minutes] = timeStr.split(':');
-		const h = parseInt(hours);
-		const ampm = h >= 12 ? 'PM' : 'AM';
-		const displayHour = h % 12 || 12;
-		return `${displayHour}:${minutes} ${ampm}`;
-	}
 </script>
 
 <div class="min-h-screen bg-gray-50">
@@ -31,16 +12,9 @@
 		<!-- Header -->
 		<div class="mb-8">
 			<div class="flex items-center gap-3">
-				<a href="/leaderboard" class="text-blue-600 hover:text-blue-800">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M10 19l-7-7m0 0l7-7m-7 7h18"
-						></path>
-					</svg>
-				</a>
+				<Link href="/leaderboard" class="text-blue-600 hover:text-blue-800">
+					<ArrowLeft class="w-6 h-6" />
+				</Link>
 				<div>
 					<h1 class="text-3xl font-bold text-gray-900">
 						{data.viewedUser.username}'s Profile
@@ -65,19 +39,7 @@
 						</p>
 					</div>
 					<div class="bg-blue-100 rounded-full p-3">
-						<svg
-							class="w-6 h-6 text-blue-600"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-							></path>
-						</svg>
+						<Clock class="w-6 h-6 text-blue-600" />
 					</div>
 				</div>
 			</div>
@@ -92,19 +54,7 @@
 						</p>
 					</div>
 					<div class="bg-green-100 rounded-full p-3">
-						<svg
-							class="w-6 h-6 text-green-600"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-							></path>
-						</svg>
+						<BarChart class="w-6 h-6 text-green-600" />
 					</div>
 				</div>
 			</div>
@@ -119,19 +69,7 @@
 						</p>
 					</div>
 					<div class="bg-purple-100 rounded-full p-3">
-						<svg
-							class="w-6 h-6 text-purple-600"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-							></path>
-						</svg>
+						<Calendar class="w-6 h-6 text-purple-600" />
 					</div>
 				</div>
 			</div>
@@ -159,47 +97,11 @@
 						class:bg-gray-100={data.stats.weekOverWeekChange === 0}
 					>
 						{#if data.stats.weekOverWeekChange > 0}
-							<svg
-								class="w-6 h-6 text-green-600"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-								></path>
-							</svg>
+							<TrendUp class="w-6 h-6 text-green-600" />
 						{:else if data.stats.weekOverWeekChange < 0}
-							<svg
-								class="w-6 h-6 text-red-600"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-								></path>
-							</svg>
+							<TrendDown class="w-6 h-6 text-red-600" />
 						{:else}
-							<svg
-								class="w-6 h-6 text-gray-600"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M5 12h14"
-								></path>
-							</svg>
+							<Minus class="w-6 h-6 text-gray-600" />
 						{/if}
 					</div>
 				</div>

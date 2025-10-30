@@ -1,39 +1,17 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { PageProps } from './$types';
+	import { formatHours, formatDate, formatTime } from '$lib/utils/formatters';
+	import type { Activity } from '$lib/server/db/schema';
+	import { Plus, Clipboard } from '$lib/components/icons';
+	import { Button } from '$lib/components';
+	import { getTodayJST, isTodayJST } from '$lib/utils/timezone';
 
 	let { data, form }: PageProps = $props();
 
 	let showModal = $state(false);
-	let editingActivity = $state<any>(null);
+	let editingActivity = $state<Activity | null>(null);
 	let inputMethod = $state('start-end');
-
-	function formatHours(hours: number): string {
-		if (hours === 0) return '0h';
-		const h = Math.floor(hours);
-		const m = Math.round((hours - h) * 60);
-		if (m === 0) return `${h}h`;
-		return `${h}h ${m}m`;
-	}
-
-	function formatDate(dateStr: string): string {
-		const date = new Date(dateStr + 'T00:00:00');
-		return date.toLocaleDateString('en-US', {
-			weekday: 'short',
-			month: 'short',
-			day: 'numeric',
-			year: 'numeric'
-		});
-	}
-
-	function formatTime(timeStr: string | null): string {
-		if (!timeStr) return '-';
-		const [hours, minutes] = timeStr.split(':');
-		const h = parseInt(hours);
-		const ampm = h >= 12 ? 'PM' : 'AM';
-		const displayHour = h % 12 || 12;
-		return `${displayHour}:${minutes} ${ampm}`;
-	}
 
 	function openCreateModal() {
 		editingActivity = null;
@@ -41,7 +19,7 @@
 		showModal = true;
 	}
 
-	function openEditModal(activity: any) {
+	function openEditModal(activity: Activity) {
 		editingActivity = activity;
 		// Determine input method based on existing data
 		if (activity.startTime && activity.endTime) {
@@ -59,9 +37,8 @@
 		editingActivity = null;
 	}
 
-	function canEdit(dateStr: string): boolean {
-		const today = new Date().toISOString().split('T')[0];
-		return dateStr === today;
+	function canEdit(date: Date): boolean {
+		return isTodayJST(date);
 	}
 
 	// Close modal on successful submission
@@ -79,56 +56,24 @@
 			<h1 class="text-3xl font-bold text-gray-900">Activities</h1>
 			<p class="text-gray-600 mt-1">Manage your work activities</p>
 		</div>
-		<button
-			onclick={openCreateModal}
-			class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition flex items-center gap-2"
-		>
-			<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M12 4v16m8-8H4"
-				></path>
-			</svg>
+		<Button onclick={openCreateModal} class="flex items-center gap-2">
+			<Plus class="w-5 h-5" />
 			Add Activity
-		</button>
+		</Button>
 	</div>
 
 	<!-- Activities List -->
 	<div class="bg-white rounded-lg shadow overflow-hidden">
 		{#if data.activities.length === 0}
 			<div class="px-6 py-12 text-center">
-				<svg
-					class="mx-auto h-12 w-12 text-gray-400"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-					></path>
-				</svg>
+				<Clipboard class="mx-auto h-12 w-12 text-gray-400" />
 				<h3 class="mt-2 text-sm font-medium text-gray-900">No activities</h3>
 				<p class="mt-1 text-sm text-gray-500">Get started by creating a new activity.</p>
 				<div class="mt-6">
-					<button
-						onclick={openCreateModal}
-						class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-					>
-						<svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 4v16m8-8H4"
-							></path>
-						</svg>
+					<Button onclick={openCreateModal} class="inline-flex items-center">
+						<Plus class="mr-2 h-5 w-5" />
 						New Activity
-					</button>
+					</Button>
 				</div>
 			</div>
 		{:else}
@@ -182,34 +127,37 @@
 								{/if}
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-								{formatHours(activity.duration)}
-							</td>
-							<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-								{#if canEdit(activity.date)}
-									<button
-										onclick={() => openEditModal(activity)}
-										class="text-blue-600 hover:text-blue-900"
+							{formatHours(activity.duration)}
+						</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+							{#if canEdit(activity.date)}
+								<Button
+									variant="text"
+									size="sm"
+									onclick={() => openEditModal(activity)}
+								>
+									Edit
+								</Button>
+								<form method="post" action="?/delete" use:enhance class="inline">
+									<input type="hidden" name="id" value={activity.id} />
+									<Button
+										variant="text"
+										size="sm"
+										type="submit"
+										class="text-red-600 hover:text-red-900"
+										onclick={(e) => {
+											if (!confirm('Are you sure you want to delete this activity?')) {
+												e.preventDefault();
+											}
+										}}
 									>
-										Edit
-									</button>
-									<form method="post" action="?/delete" use:enhance class="inline">
-										<input type="hidden" name="id" value={activity.id} />
-										<button
-											type="submit"
-											class="text-red-600 hover:text-red-900"
-											onclick={(e) => {
-												if (!confirm('Are you sure you want to delete this activity?')) {
-													e.preventDefault();
-												}
-											}}
-										>
-											Delete
-										</button>
-									</form>
-								{:else}
-									<span class="text-gray-400">-</span>
-								{/if}
-							</td>
+										Delete
+									</Button>
+								</form>
+							{:else}
+								<span class="text-gray-400">-</span>
+							{/if}
+						</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -223,10 +171,11 @@
 	<div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog">
 		<div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 			<!-- Background overlay -->
-			<div
+			<button
 				class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
 				onclick={closeModal}
-			></div>
+				aria-label="Close modal"
+			></button>
 
 			<span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
@@ -295,7 +244,7 @@
 								id="date"
 								name="date"
 								required
-								value={editingActivity?.date ?? new Date().toISOString().split('T')[0]}
+								value={editingActivity?.date ?? getTodayJST()}
 								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 							/>
 						</div>
@@ -415,19 +364,20 @@
 					</div>
 
 					<div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-						<button
+						<Button
 							type="submit"
-							class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:col-start-2 sm:text-sm"
+							class="w-full inline-flex justify-center sm:col-start-2"
 						>
 							{editingActivity ? 'Update' : 'Create'}
-						</button>
-						<button
+						</Button>
+						<Button
+							variant="secondary"
 							type="button"
 							onclick={closeModal}
-							class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+							class="mt-3 w-full inline-flex justify-center sm:mt-0 sm:col-start-1"
 						>
 							Cancel
-						</button>
+						</Button>
 					</div>
 				</form>
 			</div>

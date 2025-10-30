@@ -1,20 +1,9 @@
 <script lang="ts">
-	import type { PageProps } from './$types';
+	import type { PageProps} from './$types';
+	import { formatHours, formatDate } from '$lib/utils/formatters';
+	import { Link } from '$lib/components';
 
 	let { data }: PageProps = $props();
-
-	function formatHours(hours: number): string {
-		if (hours === 0) return '0h';
-		const h = Math.floor(hours);
-		const m = Math.round((hours - h) * 60);
-		if (m === 0) return `${h}h`;
-		return `${h}h ${m}m`;
-	}
-
-	function formatDate(dateStr: string): string {
-		const date = new Date(dateStr + 'T00:00:00');
-		return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-	}
 
 	function getRankIcon(rank: number): string {
 		if (rank === 1) return '🥇';
@@ -42,10 +31,10 @@
 		{:else}
 			<div class="divide-y divide-gray-200">
 				{#each data.leaderboard as entry (entry.userId)}
-					<a
+					<Link
 						href="/users/{entry.userId}"
-						class="block px-6 py-4 hover:bg-gray-50 transition"
-						class:bg-blue-50={entry.userId === data.user.id}
+						variant="card"
+						class="block px-6 py-4 {entry.userId === data.user.id ? 'bg-blue-50' : ''}"
 					>
 						<div class="flex items-center justify-between">
 							<div class="flex items-center space-x-4 flex-1">
@@ -104,7 +93,7 @@
 								</div>
 							</div>
 						{/if}
-					</a>
+					</Link>
 				{/each}
 			</div>
 		{/if}

@@ -3,7 +3,7 @@ import { encodeBase32LowerCase } from '@oslojs/encoding';
 import { db } from '../src/lib/server/db/index.js';
 import * as table from '../src/lib/server/db/schema.js';
 
-async function createUser(username: string, password: string) {
+async function createUser(username: string, password: string, isAdmin: boolean = false) {
 	// Generate user ID
 	const bytes = crypto.getRandomValues(new Uint8Array(15));
 	const userId = encodeBase32LowerCase(bytes);
@@ -20,11 +20,13 @@ async function createUser(username: string, password: string) {
 		await db.insert(table.user).values({
 			id: userId,
 			username,
-			passwordHash
+			passwordHash,
+			isAdmin
 		});
 		console.log(`✅ User created successfully!`);
 		console.log(`   Username: ${username}`);
 		console.log(`   User ID: ${userId}`);
+		console.log(`   Admin: ${isAdmin ? 'Yes' : 'No'}`);
 	} catch (error) {
 		console.error('❌ Error creating user:', error instanceof Error ? error.message : 'Unknown error');
 		process.exit(1);
@@ -36,10 +38,12 @@ async function createUser(username: string, password: string) {
 // Get username and password from command line arguments
 const username = process.argv[2];
 const password = process.argv[3];
+const isAdminArg = process.argv[4];
 
 if (!username || !password) {
-	console.error('Usage: tsx scripts/create-user.ts <username> <password>');
+	console.error('Usage: tsx scripts/create-user.ts <username> <password> [--admin]');
 	console.error('Example: tsx scripts/create-user.ts john mypassword123');
+	console.error('Example (admin): tsx scripts/create-user.ts admin adminpass --admin');
 	process.exit(1);
 }
 
@@ -58,5 +62,7 @@ if (password.length < 6 || password.length > 255) {
 	process.exit(1);
 }
 
-console.log(`Creating user: ${username}...`);
-createUser(username, password);
+const isAdmin = isAdminArg === '--admin';
+
+console.log(`Creating user: ${username}${isAdmin ? ' (admin)' : ''}...`);
+createUser(username, password, isAdmin);

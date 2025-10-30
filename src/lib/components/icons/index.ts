@@ -1,0 +1,11 @@
+export { default as Plus } from './Plus.svelte';
+export { default as Clock } from './Clock.svelte';
+export { default as BarChart } from './BarChart.svelte';
+export { default as Calendar } from './Calendar.svelte';
+export { default as TrendUp } from './TrendUp.svelte';
+export { default as TrendDown } from './TrendDown.svelte';
+export { default as Minus } from './Minus.svelte';
+export { default as Clipboard } from './Clipboard.svelte';
+export { default as ArrowLeft } from './ArrowLeft.svelte';
+export { default as Menu } from './Menu.svelte';
+export type { IconProps } from './IconProps';
