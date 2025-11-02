@@ -29,6 +29,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
+ENV DATABASE_URL=${DATABASE_URL}
 
 RUN npm config set registry https://registry.npmjs.org/
 
