@@ -26,6 +26,8 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
@@ -43,6 +45,8 @@ COPY --from=builder /app/build ./build
 
 # Copy migration files (needed at runtime)
 COPY --from=builder /app/drizzle ./drizzle
+
+
 
 # Expose port
 EXPOSE 3000
