@@ -3,11 +3,18 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
+RUN npm config set registry https://registry.npmjs.org/
+
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Install dependencies (including dev dependencies for building)
-RUN npm ci
+# Clean npm cache before install to avoid corruption
+RUN npm cache clean --force
+
+# Install deps (faster, avoids audit and progress output)
+RUN npm ci --prefer-offline --no-audit --progress=false
+
 
 # Copy source code
 COPY . .
@@ -23,6 +30,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
+
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
+RUN npm config set registry https://registry.npmjs.org/
 
 # Copy package files (needed for npm ci)
 COPY package.json package-lock.json ./
