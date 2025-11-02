@@ -3,7 +3,6 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
 RUN npm config set registry https://registry.npmjs.org/
 
 # Copy package files
@@ -31,7 +30,6 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
 
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf
 RUN npm config set registry https://registry.npmjs.org/
 
 # Copy package files (needed for npm ci)
