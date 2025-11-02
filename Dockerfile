@@ -29,7 +29,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
-ENV DATABASE_URL=${DATABASE_URL}
 
 RUN npm config set registry https://registry.npmjs.org/
 
@@ -49,4 +48,4 @@ COPY --from=builder /app/drizzle ./drizzle
 EXPOSE 3000
 
 # Run migrations then start the server
-CMD ["sh", "-c", "npm run db:migrate && node build"]
+CMD ["sh", "-c", "node build"]

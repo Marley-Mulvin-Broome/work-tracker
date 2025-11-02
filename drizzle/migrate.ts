@@ -5,7 +5,7 @@ import postgres from 'postgres'
 async function runMigrations() {
   console.log('Migration started');
 
-  const dbUrl = process.env.DATABASE_URL;
+  const dbUrl = import.meta.env.VITE_DATABASE_URL || process.env.DATABASE_URL;
   if (!dbUrl) {
     throw new Error('DATABASE_URL is not set');
   }
