@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import { formatHours, formatDate, formatTime } from '$lib/utils/formatters';
-	import StatsCard from '$lib/components/StatsCard.svelte';
 	import { Table, TableRow, TableHeader, TableCell } from '$lib/components';
 	import { Clock, BarChart, Calendar, TrendUp, TrendDown, Minus } from '$lib/components/icons';
 

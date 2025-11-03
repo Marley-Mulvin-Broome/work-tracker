@@ -4,12 +4,20 @@ import { eq } from 'drizzle-orm';
 import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
+import { hasAnyUsers } from '$lib/server/services/user.service';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		return redirect(302, '/');
 	}
+
+	// Redirect to register if no users exist
+	const usersExist = await hasAnyUsers();
+	if (!usersExist) {
+		return redirect(302, '/register');
+	}
+
 	return {};
 };
 

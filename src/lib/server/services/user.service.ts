@@ -34,6 +34,14 @@ export async function getAllUsers() {
 }
 
 /**
+ * Check if any users exist in the database
+ */
+export async function hasAnyUsers(): Promise<boolean> {
+	const users = await db.select({ id: table.user.id }).from(table.user).limit(1);
+	return users.length > 0;
+}
+
+/**
  * Search users by username (case-insensitive)
  */
 export async function searchUsers(query: string) {
