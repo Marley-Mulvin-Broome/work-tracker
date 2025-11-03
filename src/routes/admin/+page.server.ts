@@ -5,13 +5,10 @@ import {
 	getAllUsers,
 	searchUsers,
 	createUser,
-	deleteUser
+	deleteUser,
+	updateUserPassword
 } from '$lib/server/services/user.service';
-import {
-	getAllApiKeys,
-	createApiKey,
-	deleteApiKey
-} from '$lib/server/services/apikey.service';
+import { getAllApiKeys, createApiKey, deleteApiKey } from '$lib/server/services/apikey.service';
 
 export const load: PageServerLoad = async (event) => {
 	const user = requireAdmin(event);
@@ -64,7 +61,10 @@ export const actions: Actions = {
 			console.error('Error creating user:', error);
 
 			if (error instanceof Error) {
-				if (error.message.includes('unique constraint') || error.message.includes('duplicate key')) {
+				if (
+					error.message.includes('unique constraint') ||
+					error.message.includes('duplicate key')
+				) {
 					return fail(400, { message: 'Username already exists' });
 				}
 			}
@@ -102,7 +102,7 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 
 		const name = formData.get('name') as string;
-		const userId = formData.get('userId') as string || admin.id;
+		const userId = (formData.get('userId') as string) || admin.id;
 
 		if (!name) {
 			return fail(400, { message: 'API key name is required' });
@@ -137,6 +137,30 @@ export const actions: Actions = {
 		} catch (error) {
 			console.error('Error deleting API key:', error);
 			return fail(500, { message: 'Failed to delete API key' });
+		}
+	},
+
+	changePassword: async (event) => {
+		requireAdmin(event);
+		const formData = await event.request.formData();
+
+		const userId = formData.get('userId') as string;
+		const newPassword = formData.get('newPassword') as string;
+
+		if (!userId || !newPassword) {
+			return fail(400, { message: 'User ID and new password are required' });
+		}
+
+		if (newPassword.length < 6 || newPassword.length > 255) {
+			return fail(400, { message: 'Password must be between 6 and 255 characters' });
+		}
+
+		try {
+			await updateUserPassword(userId, newPassword);
+			return { success: true, message: 'Password changed successfully' };
+		} catch (error) {
+			console.error('Error changing password:', error);
+			return fail(500, { message: 'Failed to change password' });
 		}
 	}
 };

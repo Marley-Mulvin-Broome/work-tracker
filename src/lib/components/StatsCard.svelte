@@ -13,7 +13,9 @@
 
 	let { title, value, icon, color = 'blue', formatAsHours = false }: Props = $props();
 
-	const displayValue = $derived(formatAsHours && typeof value === 'number' ? formatHours(value) : value);
+	const displayValue = $derived(
+		formatAsHours && typeof value === 'number' ? formatHours(value) : value
+	);
 
 	const colorClasses = {
 		blue: 'bg-blue-100 text-blue-600',
@@ -33,16 +35,16 @@
 	const IconComponent = $derived(icons[icon]);
 </script>
 
-<div class="bg-white rounded-lg shadow p-6">
+<div class="rounded-lg bg-white p-6 shadow">
 	<div class="flex items-center justify-between">
 		<div>
 			<p class="text-sm font-medium text-gray-600">{title}</p>
-			<p class="text-3xl font-bold text-gray-900 mt-2">
+			<p class="mt-2 text-3xl font-bold text-gray-900">
 				{displayValue}
 			</p>
 		</div>
 		<div class="rounded-full p-3 {colorClasses[color]}">
-			<IconComponent class="w-6 h-6" />
+			<IconComponent class="h-6 w-6" />
 		</div>
 	</div>
 </div>

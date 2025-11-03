@@ -1,9 +1,15 @@
-import type { Handle, ServerInit } from '@sveltejs/kit';
+import { error, type Handle, type ServerInit } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
-import { migrate } from 'drizzle-orm/postgres-js/migrator'
-import { client, db } from '$lib/server/db';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import { db } from '$lib/server/db';
+import { dev } from '$app/environment';
+import { validateApiKey } from '$lib/server/services';
+import { sequence } from '@sveltejs/kit/hooks';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
+	if (event.url.pathname.startsWith('/api') || event.url.pathname.startsWith('/health'))
+		return resolve(event);
+
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 
 	if (!sessionToken) {
@@ -25,18 +31,35 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+const handleAPIAuth: Handle = async ({ event, resolve }) => {
+	if (!event.url.pathname.startsWith('/api')) return resolve(event);
+
+	const apiKey = event.request.headers.get('Authorization')?.replace('Bearer ', '');
+
+	if (!apiKey) return error(401, 'Unauthorized');
+
+	const user = await validateApiKey(apiKey);
+
+	if (!user) return error(401, 'Unauthorized');
+
+	event.locals.user = user;
+	return resolve(event);
+};
+
 export const init: ServerInit = async () => {
+	if (dev) {
+		console.log('Skipping migrations in dev mode');
+		return;
+	}
 	console.log('Migration started');
 
-  try {
-    await migrate(db, { migrationsFolder: './drizzle' });
-    console.log('Migration completed successfully');
-  } catch (error) {
-    console.error('Migration error:', error);
-    throw error;
-  } finally {
-		client.end();
+	try {
+		await migrate(db, { migrationsFolder: './drizzle' });
+		console.log('Migration completed successfully');
+	} catch (error) {
+		console.error('Migration error:', error);
+		throw error;
 	}
 };
 
-export const handle: Handle = handleAuth;
+export const handle: Handle = sequence(handleAuth, handleAPIAuth);

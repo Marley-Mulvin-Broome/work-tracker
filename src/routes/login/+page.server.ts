@@ -27,7 +27,6 @@ export const actions: Actions = {
 		if (!validatePassword(password)) {
 			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
 		}
-
 		const results = await db.select().from(table.user).where(eq(table.user.username, username));
 
 		const existingUser = results.at(0);

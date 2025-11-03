@@ -19,9 +19,9 @@ export function formatHours(hours: number): string {
 export function formatDate(date: string | Date): string {
 	const dateObj = typeof date === 'string' ? new Date(date + 'T00:00:00') : date;
 	// Format in Japanese timezone
-	return dateObj.toLocaleDateString('en-US', { 
-		month: 'short', 
-		day: 'numeric', 
+	return dateObj.toLocaleDateString('en-US', {
+		month: 'short',
+		day: 'numeric',
 		year: 'numeric',
 		timeZone: 'Asia/Tokyo'
 	});

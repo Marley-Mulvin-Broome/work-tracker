@@ -28,7 +28,9 @@ function hashApiKey(key: string): string {
  * Create a new API key
  * @returns Object with the API key and its database record (without the plain key stored)
  */
-export async function createApiKey(input: CreateApiKeyInput): Promise<{ apiKey: string; record: table.ApiKey }> {
+export async function createApiKey(
+	input: CreateApiKeyInput
+): Promise<{ apiKey: string; record: table.ApiKey }> {
 	const apiKey = generateApiKey();
 	const keyHash = hashApiKey(apiKey);
 
@@ -48,10 +50,7 @@ export async function createApiKey(input: CreateApiKeyInput): Promise<{ apiKey: 
  * Get all API keys for a user
  */
 export async function getUserApiKeys(userId: string) {
-	return await db
-		.select()
-		.from(table.apiKey)
-		.where(eq(table.apiKey.userId, userId));
+	return await db.select().from(table.apiKey).where(eq(table.apiKey.userId, userId));
 }
 
 /**

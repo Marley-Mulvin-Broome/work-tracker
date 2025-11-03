@@ -61,17 +61,20 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (error) {
 			console.error('Error creating activity:', error);
-			
+
 			// Handle specific database errors
 			if (error instanceof Error) {
-				if (error.message.includes('unique constraint') || error.message.includes('duplicate key')) {
+				if (
+					error.message.includes('unique constraint') ||
+					error.message.includes('duplicate key')
+				) {
 					return fail(400, { message: 'An activity with this information already exists.' });
 				}
 				if (error.message.includes('foreign key') || error.message.includes('violates')) {
 					return fail(400, { message: 'Invalid user reference.' });
 				}
 			}
-			
+
 			return fail(500, { message: 'Failed to create activity. Please try again.' });
 		}
 	},
@@ -129,17 +132,20 @@ export const actions: Actions = {
 			return { success: true };
 		} catch (error) {
 			console.error('Error updating activity:', error);
-			
+
 			// Handle specific database errors
 			if (error instanceof Error) {
-				if (error.message.includes('unique constraint') || error.message.includes('duplicate key')) {
+				if (
+					error.message.includes('unique constraint') ||
+					error.message.includes('duplicate key')
+				) {
 					return fail(400, { message: 'An activity with this information already exists.' });
 				}
 				if (error.message.includes('foreign key') || error.message.includes('violates')) {
 					return fail(400, { message: 'Invalid user reference.' });
 				}
 			}
-			
+
 			return fail(500, { message: 'Failed to update activity. Please try again.' });
 		}
 	},

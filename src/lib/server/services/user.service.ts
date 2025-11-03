@@ -83,6 +83,20 @@ export async function deleteUser(userId: string) {
 }
 
 /**
+ * Update a user's password (admin only)
+ */
+export async function updateUserPassword(userId: string, newPassword: string) {
+	const passwordHash = await hash(newPassword, {
+		memoryCost: 19456,
+		timeCost: 2,
+		outputLen: 32,
+		parallelism: 1
+	});
+
+	await db.update(table.user).set({ passwordHash }).where(eq(table.user.id, userId));
+}
+
+/**
  * Check if a user is an admin
  */
 export async function isUserAdmin(userId: string): Promise<boolean> {

@@ -5,10 +5,7 @@
 </script>
 
 <svg class={classes} {width} {height} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-	<path
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		stroke-width="2"
-		d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-	></path>
+	<circle cx="12" cy="12" r="1" fill="currentColor"></circle>
+	<circle cx="12" cy="5" r="1" fill="currentColor"></circle>
+	<circle cx="12" cy="19" r="1" fill="currentColor"></circle>
 </svg>

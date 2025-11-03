@@ -48,7 +48,12 @@ export function calculateActivityDuration(
 		endTime = formData.get('endTime') as string;
 
 		if (!startTime || !endTime) {
-			return { duration: 0, startTime: null, endTime: null, error: 'Start time and end time are required' };
+			return {
+				duration: 0,
+				startTime: null,
+				endTime: null,
+				error: 'Start time and end time are required'
+			};
 		}
 
 		// Calculate duration in hours
@@ -66,14 +71,24 @@ export function calculateActivityDuration(
 		duration = (endMinutes - startMinutes) / 60;
 
 		if (duration <= 0) {
-			return { duration: 0, startTime: null, endTime: null, error: 'End time must be after start time' };
+			return {
+				duration: 0,
+				startTime: null,
+				endTime: null,
+				error: 'End time must be after start time'
+			};
 		}
 	} else if (inputMethod === 'start-duration') {
 		startTime = formData.get('startTime') as string;
 		const durationInput = parseFloat(formData.get('duration') as string);
 
 		if (!startTime || !durationInput) {
-			return { duration: 0, startTime: null, endTime: null, error: 'Start time and duration are required' };
+			return {
+				duration: 0,
+				startTime: null,
+				endTime: null,
+				error: 'Start time and duration are required'
+			};
 		}
 
 		duration = durationInput;

@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { Plus } from '$lib/components/icons';
-	import { FAB, Button } from '$lib/components';
+	import {
+		FAB,
+		Button,
+		TextInput,
+		TextareaInput,
+		DateInput,
+		RadioGroup,
+		TimeInput,
+		NumberInput
+	} from '$lib/components';
 	import { getTodayJST } from '$lib/utils/timezone';
 
 	let showModal = $state(false);
@@ -16,25 +25,23 @@
 <!-- Floating Action Button -->
 {#if !showModal}
 	<FAB onclick={() => (showModal = true)} aria-label="Quick add activity">
-		<Plus class="w-6 h-6" />
+		<Plus class="h-6 w-6" />
 	</FAB>
 {/if}
 
 <!-- Quick Add Modal -->
 {#if showModal}
-	<div class="fixed z-50 inset-0 overflow-y-auto" role="dialog" aria-modal="true">
+	<div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
 		<!-- Background overlay -->
 		<button
-			class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+			class="bg-opacity-75 fixed inset-0 bg-gray-500 transition-opacity"
 			onclick={closeModal}
 			aria-label="Close modal"
 		></button>
 
 		<!-- Modal content wrapper -->
-		<div class="flex items-center justify-center min-h-screen px-4">
-			<div
-				class="relative bg-white rounded-lg shadow-xl max-w-lg w-full z-10"
-			>
+		<div class="flex min-h-screen items-center justify-center px-4">
+			<div class="relative z-10 w-full max-w-lg rounded-lg bg-white shadow-xl">
 				<form
 					method="post"
 					action="/activities?/create"
@@ -55,170 +62,76 @@
 					<input type="hidden" name="inputMethod" value={inputMethod} />
 
 					<div class="space-y-4">
-						<!-- Name -->
-						<div>
-							<label for="quick-name" class="block text-sm font-medium text-gray-700">
-								Activity Name *
-							</label>
-							<input
-								type="text"
-								id="quick-name"
-								name="name"
-								required
-								placeholder="What did you work on?"
-								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-							/>
-						</div>
+						<TextInput
+							id="quick-name"
+							name="name"
+							label="Activity Name"
+							required
+							placeholder="What did you work on?"
+						/>
 
-						<!-- Description -->
-						<div>
-							<label for="quick-description" class="block text-sm font-medium text-gray-700">
-								Description
-							</label>
-							<textarea
-								id="quick-description"
-								name="description"
-								rows="2"
-								placeholder="Optional details..."
-								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-							></textarea>
-						</div>
+						<TextareaInput
+							id="quick-description"
+							name="description"
+							label="Description"
+							placeholder="Optional details..."
+						/>
 
-						<!-- Date -->
-						<div>
-							<label for="quick-date" class="block text-sm font-medium text-gray-700"
-								>Date *</label
-							>
-							<input
-								type="date"
-								id="quick-date"
-								name="date"
-								required
-								value={getTodayJST()}
-								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-							/>
-						</div>
+						<DateInput id="quick-date" name="date" label="Date" required value={getTodayJST()} />
 
-						<!-- Input Method Selection -->
-						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2">
-								How would you like to log time?
-							</label>
-							<div class="space-y-2">
-								<label class="flex items-center cursor-pointer">
-									<input
-										type="radio"
-										bind:group={inputMethod}
-										value="date-duration"
-										class="mr-2"
-									/>
-									<span class="text-sm">Just duration (quick!)</span>
-								</label>
-								<label class="flex items-center cursor-pointer">
-									<input
-										type="radio"
-										bind:group={inputMethod}
-										value="start-duration"
-										class="mr-2"
-									/>
-									<span class="text-sm">Start time & duration</span>
-								</label>
-								<label class="flex items-center cursor-pointer">
-									<input
-										type="radio"
-										bind:group={inputMethod}
-										value="start-end"
-										class="mr-2"
-									/>
-									<span class="text-sm">Start & end time</span>
-								</label>
-							</div>
-						</div>
+						<RadioGroup
+							label="How would you like to log time?"
+							name="inputMethod"
+							bind:value={inputMethod}
+							options={[
+								{ value: 'date-duration', label: 'Just duration (quick!)' },
+								{ value: 'start-duration', label: 'Start time & duration' },
+								{ value: 'start-end', label: 'Start & end time' }
+							]}
+						/>
 
 						<!-- Conditional Fields -->
 						{#if inputMethod === 'start-end'}
 							<div class="grid grid-cols-2 gap-4">
-								<div>
-									<label for="quick-startTime" class="block text-sm font-medium text-gray-700">
-										Start Time *
-									</label>
-									<input
-										type="time"
-										id="quick-startTime"
-										name="startTime"
-										required
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
-								<div>
-									<label for="quick-endTime" class="block text-sm font-medium text-gray-700">
-										End Time *
-									</label>
-									<input
-										type="time"
-										id="quick-endTime"
-										name="endTime"
-										required
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
+								<TimeInput id="quick-startTime" name="startTime" label="Start Time" required />
+								<TimeInput id="quick-endTime" name="endTime" label="End Time" required />
 							</div>
 						{:else if inputMethod === 'start-duration'}
 							<div class="grid grid-cols-2 gap-4">
-								<div>
-									<label for="quick-startTime" class="block text-sm font-medium text-gray-700">
-										Start Time *
-									</label>
-									<input
-										type="time"
-										id="quick-startTime"
-										name="startTime"
-										required
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
-								<div>
-									<label for="quick-duration" class="block text-sm font-medium text-gray-700">
-										Duration (hours) *
-									</label>
-									<input
-										type="number"
-										id="quick-duration"
-										name="duration"
-										step="0.25"
-										min="0.25"
-										required
-										placeholder="1.5"
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
-							</div>
-						{:else if inputMethod === 'date-duration'}
-							<div>
-								<label for="quick-duration" class="block text-sm font-medium text-gray-700">
-									Duration (hours) *
-								</label>
-								<input
-									type="number"
+								<TimeInput id="quick-startTime" name="startTime" label="Start Time" required />
+								<NumberInput
 									id="quick-duration"
 									name="duration"
-									step="0.25"
-									min="0.25"
+									label="Duration (hours)"
+									step={0.25}
+									min={0.25}
 									required
-									placeholder="e.g., 2 for 2 hours, 1.5 for 1.5 hours"
-									class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+									placeholder="1.5"
 								/>
 							</div>
+						{:else if inputMethod === 'date-duration'}
+							<NumberInput
+								id="quick-duration"
+								name="duration"
+								label="Duration (hours)"
+								step={0.25}
+								min={0.25}
+								required
+								placeholder="e.g., 2 for 2 hours, 1.5 for 1.5 hours"
+							/>
 						{/if}
 					</div>
 
 					<div class="mt-5 grid grid-cols-2 gap-3">
-						<Button variant="secondary" type="button" onclick={closeModal} class="inline-flex justify-center">
+						<Button
+							variant="secondary"
+							type="button"
+							onclick={closeModal}
+							class="inline-flex justify-center"
+						>
 							Cancel
 						</Button>
-						<Button type="submit" class="inline-flex justify-center">
-							Add Activity
-						</Button>
+						<Button type="submit" class="inline-flex justify-center">Add Activity</Button>
 					</div>
 				</form>
 			</div>

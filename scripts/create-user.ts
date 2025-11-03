@@ -28,7 +28,10 @@ async function createUser(username: string, password: string, isAdmin: boolean =
 		console.log(`   User ID: ${userId}`);
 		console.log(`   Admin: ${isAdmin ? 'Yes' : 'No'}`);
 	} catch (error) {
-		console.error('❌ Error creating user:', error instanceof Error ? error.message : 'Unknown error');
+		console.error(
+			'❌ Error creating user:',
+			error instanceof Error ? error.message : 'Unknown error'
+		);
 		process.exit(1);
 	}
 

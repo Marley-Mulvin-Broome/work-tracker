@@ -6,3 +6,17 @@ export { default as FAB } from './FAB.svelte';
 export { default as Navigation } from './Navigation.svelte';
 export { default as StatsCard } from './StatsCard.svelte';
 export { default as QuickAddButton } from './QuickAddButton.svelte';
+
+// Form components
+export {
+	TextInput,
+	PasswordInput,
+	TextareaInput,
+	DateInput,
+	TimeInput,
+	NumberInput,
+	RadioGroup,
+	SelectInput,
+	CheckboxInput,
+	SearchInput
+} from './form';

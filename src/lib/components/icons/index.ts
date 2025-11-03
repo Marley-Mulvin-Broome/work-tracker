@@ -8,4 +8,7 @@ export { default as Minus } from './Minus.svelte';
 export { default as Clipboard } from './Clipboard.svelte';
 export { default as ArrowLeft } from './ArrowLeft.svelte';
 export { default as Menu } from './Menu.svelte';
+export { default as Eye } from './Eye.svelte';
+export { default as EyeOff } from './EyeOff.svelte';
+export { default as MoreVertical } from './MoreVertical.svelte';
 export type { IconProps } from './IconProps';

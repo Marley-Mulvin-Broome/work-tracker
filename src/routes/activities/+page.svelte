@@ -4,7 +4,15 @@
 	import { formatHours, formatDate, formatTime } from '$lib/utils/formatters';
 	import type { Activity } from '$lib/server/db/schema';
 	import { Plus, Clipboard } from '$lib/components/icons';
-	import { Button } from '$lib/components';
+	import {
+		Button,
+		TextInput,
+		TextareaInput,
+		DateInput,
+		RadioGroup,
+		TimeInput,
+		NumberInput
+	} from '$lib/components';
 	import { getTodayJST, isTodayJST } from '$lib/utils/timezone';
 
 	let { data, form }: PageProps = $props();
@@ -49,21 +57,21 @@
 	});
 </script>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 	<!-- Header -->
-	<div class="mb-8 flex justify-between items-center">
+	<div class="mb-8 flex items-center justify-between">
 		<div>
 			<h1 class="text-3xl font-bold text-gray-900">Activities</h1>
-			<p class="text-gray-600 mt-1">Manage your work activities</p>
+			<p class="mt-1 text-gray-600">Manage your work activities</p>
 		</div>
 		<Button onclick={openCreateModal} class="flex items-center gap-2">
-			<Plus class="w-5 h-5" />
+			<Plus class="h-5 w-5" />
 			Add Activity
 		</Button>
 	</div>
 
 	<!-- Activities List -->
-	<div class="bg-white rounded-lg shadow overflow-hidden">
+	<div class="overflow-hidden rounded-lg bg-white shadow">
 		{#if data.activities.length === 0}
 			<div class="px-6 py-12 text-center">
 				<Clipboard class="mx-auto h-12 w-12 text-gray-400" />
@@ -81,83 +89,79 @@
 				<thead class="bg-gray-50">
 					<tr>
 						<th
-							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
 						>
 							Date
 						</th>
 						<th
-							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
 						>
 							Activity
 						</th>
 						<th
-							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
 						>
 							Time
 						</th>
 						<th
-							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
 						>
 							Duration
 						</th>
 						<th
-							class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
 						>
 							Actions
 						</th>
 					</tr>
 				</thead>
-				<tbody class="bg-white divide-y divide-gray-200">
+				<tbody class="divide-y divide-gray-200 bg-white">
 					{#each data.activities as activity (activity.id)}
 						<tr class="hover:bg-gray-50">
-							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+							<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
 								{formatDate(activity.date)}
 							</td>
 							<td class="px-6 py-4 text-sm text-gray-900">
 								<div class="font-medium">{activity.name}</div>
 								{#if activity.description}
-									<div class="text-gray-500 text-xs mt-1">{activity.description}</div>
+									<div class="mt-1 text-xs text-gray-500">{activity.description}</div>
 								{/if}
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+							<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
 								{#if activity.startTime || activity.endTime}
 									<div>{formatTime(activity.startTime)} - {formatTime(activity.endTime)}</div>
 								{:else}
 									<div class="text-gray-400">No specific time</div>
 								{/if}
 							</td>
-							<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-							{formatHours(activity.duration)}
-						</td>
-						<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-							{#if canEdit(activity.date)}
-								<Button
-									variant="text"
-									size="sm"
-									onclick={() => openEditModal(activity)}
-								>
-									Edit
-								</Button>
-								<form method="post" action="?/delete" use:enhance class="inline">
-									<input type="hidden" name="id" value={activity.id} />
-									<Button
-										variant="text"
-										size="sm"
-										type="submit"
-										class="text-red-600 hover:text-red-900"
-										onclick={(e) => {
-											if (!confirm('Are you sure you want to delete this activity?')) {
-												e.preventDefault();
-											}
-										}}
-									>
-										Delete
+							<td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
+								{formatHours(activity.duration)}
+							</td>
+							<td class="space-x-2 px-6 py-4 text-sm font-medium whitespace-nowrap">
+								{#if canEdit(activity.date)}
+									<Button variant="text" size="sm" onclick={() => openEditModal(activity)}>
+										Edit
 									</Button>
-								</form>
-							{:else}
-								<span class="text-gray-400">-</span>
-							{/if}
-						</td>
+									<form method="post" action="?/delete" use:enhance class="inline">
+										<input type="hidden" name="id" value={activity.id} />
+										<Button
+											variant="text"
+											size="sm"
+											type="submit"
+											class="text-red-600 hover:text-red-900"
+											onclick={(e) => {
+												if (!confirm('Are you sure you want to delete this activity?')) {
+													e.preventDefault();
+												}
+											}}
+										>
+											Delete
+										</Button>
+									</form>
+								{:else}
+									<span class="text-gray-400">-</span>
+								{/if}
+							</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -168,19 +172,21 @@
 
 <!-- Modal -->
 {#if showModal}
-	<div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog">
-		<div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+	<div class="fixed inset-0 z-10 overflow-y-auto" aria-labelledby="modal-title" role="dialog">
+		<div
+			class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+		>
 			<!-- Background overlay -->
 			<button
-				class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+				class="bg-opacity-75 fixed inset-0 bg-gray-500 transition-opacity"
 				onclick={closeModal}
 				aria-label="Close modal"
 			></button>
 
-			<span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+			<span class="hidden sm:inline-block sm:h-screen sm:align-middle">&#8203;</span>
 
 			<div
-				class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+				class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
 			>
 				<form
 					method="post"
@@ -201,180 +207,111 @@
 					<input type="hidden" name="inputMethod" value={inputMethod} />
 
 					{#if form?.message}
-						<div class="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">
+						<div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
 							{form.message}
 						</div>
 					{/if}
 
 					<div class="space-y-4">
-						<!-- Name -->
-						<div>
-							<label for="name" class="block text-sm font-medium text-gray-700">
-								Activity Name *
-							</label>
-							<input
-								type="text"
-								id="name"
-								name="name"
-								required
-								value={editingActivity?.name ?? ''}
-								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-							/>
-						</div>
+						<TextInput
+							id="name"
+							name="name"
+							label="Activity Name"
+							required
+							value={editingActivity?.name ?? ''}
+						/>
 
-						<!-- Description -->
-						<div>
-							<label for="description" class="block text-sm font-medium text-gray-700">
-								Description
-							</label>
-							<textarea
-								id="description"
-								name="description"
-								rows="2"
-								value={editingActivity?.description ?? ''}
-								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-							></textarea>
-						</div>
+						<TextareaInput
+							id="description"
+							name="description"
+							label="Description"
+							value={editingActivity?.description ?? ''}
+						/>
 
-						<!-- Date -->
-						<div>
-							<label for="date" class="block text-sm font-medium text-gray-700">Date *</label>
-							<input
-								type="date"
-								id="date"
-								name="date"
-								required
-								value={editingActivity?.date ?? getTodayJST()}
-								class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-							/>
-						</div>
+						<DateInput
+							id="date"
+							name="date"
+							label="Date"
+							required
+							value={editingActivity?.date
+								? editingActivity.date instanceof Date
+									? editingActivity.date.toISOString().split('T')[0]
+									: editingActivity.date
+								: getTodayJST()}
+						/>
 
-						<!-- Input Method Selection -->
-						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2">Input Method</label>
-							<div class="space-y-2">
-								<label class="flex items-center">
-									<input
-										type="radio"
-										bind:group={inputMethod}
-										value="start-end"
-										class="mr-2"
-									/>
-									Start & End Time
-								</label>
-								<label class="flex items-center">
-									<input
-										type="radio"
-										bind:group={inputMethod}
-										value="start-duration"
-										class="mr-2"
-									/>
-									Start Time & Duration
-								</label>
-								<label class="flex items-center">
-									<input
-										type="radio"
-										bind:group={inputMethod}
-										value="date-duration"
-										class="mr-2"
-									/>
-									Duration Only
-								</label>
-							</div>
-						</div>
+						<RadioGroup
+							label="Input Method"
+							name="inputMethod"
+							bind:value={inputMethod}
+							options={[
+								{ value: 'start-end', label: 'Start & End Time' },
+								{ value: 'start-duration', label: 'Start Time & Duration' },
+								{ value: 'date-duration', label: 'Duration Only' }
+							]}
+						/>
 
 						<!-- Conditional Fields -->
 						{#if inputMethod === 'start-end'}
 							<div class="grid grid-cols-2 gap-4">
-								<div>
-									<label for="startTime" class="block text-sm font-medium text-gray-700">
-										Start Time *
-									</label>
-									<input
-										type="time"
-										id="startTime"
-										name="startTime"
-										required
-										value={editingActivity?.startTime ?? ''}
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
-								<div>
-									<label for="endTime" class="block text-sm font-medium text-gray-700">
-										End Time *
-									</label>
-									<input
-										type="time"
-										id="endTime"
-										name="endTime"
-										required
-										value={editingActivity?.endTime ?? ''}
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
+								<TimeInput
+									id="startTime"
+									name="startTime"
+									label="Start Time"
+									required
+									value={editingActivity?.startTime ?? ''}
+								/>
+
+								<TimeInput
+									id="endTime"
+									name="endTime"
+									label="End Time"
+									required
+									value={editingActivity?.endTime ?? ''}
+								/>
 							</div>
 						{:else if inputMethod === 'start-duration'}
 							<div class="grid grid-cols-2 gap-4">
-								<div>
-									<label for="startTime" class="block text-sm font-medium text-gray-700">
-										Start Time *
-									</label>
-									<input
-										type="time"
-										id="startTime"
-										name="startTime"
-										required
-										value={editingActivity?.startTime ?? ''}
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
-								<div>
-									<label for="duration" class="block text-sm font-medium text-gray-700">
-										Duration (hours) *
-									</label>
-									<input
-										type="number"
-										id="duration"
-										name="duration"
-										step="0.25"
-										min="0.25"
-										required
-										value={editingActivity?.duration ?? ''}
-										class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-									/>
-								</div>
-							</div>
-						{:else if inputMethod === 'date-duration'}
-							<div>
-								<label for="duration" class="block text-sm font-medium text-gray-700">
-									Duration (hours) *
-								</label>
-								<input
-									type="number"
+								<TimeInput
+									id="startTime"
+									name="startTime"
+									label="Start Time"
+									required
+									value={editingActivity?.startTime ?? ''}
+								/>
+
+								<NumberInput
 									id="duration"
 									name="duration"
-									step="0.25"
-									min="0.25"
+									label="Duration (hours)"
 									required
+									step={0.25}
+									min={0.25}
 									value={editingActivity?.duration ?? ''}
-									class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
 								/>
 							</div>
+						{:else if inputMethod === 'date-duration'}
+							<NumberInput
+								id="duration"
+								name="duration"
+								label="Duration (hours)"
+								required
+								step={0.25}
+								min={0.25}
+								value={editingActivity?.duration ?? ''}
+							/>
 						{/if}
 					</div>
 
-					<div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-						<Button
-							type="submit"
-							class="w-full inline-flex justify-center sm:col-start-2"
-						>
+					<div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+						<Button type="submit" class="inline-flex w-full justify-center sm:col-start-2">
 							{editingActivity ? 'Update' : 'Create'}
 						</Button>
 						<Button
 							variant="secondary"
 							type="button"
 							onclick={closeModal}
-							class="mt-3 w-full inline-flex justify-center sm:mt-0 sm:col-start-1"
+							class="mt-3 inline-flex w-full justify-center sm:col-start-1 sm:mt-0"
 						>
 							Cancel
 						</Button>
