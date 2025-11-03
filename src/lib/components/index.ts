@@ -7,6 +7,12 @@ export { default as Navigation } from './Navigation.svelte';
 export { default as StatsCard } from './StatsCard.svelte';
 export { default as QuickAddButton } from './QuickAddButton.svelte';
 
+// Table components
+export { default as Table } from './Table.svelte';
+export { default as TableRow } from './TableRow.svelte';
+export { default as TableHeader } from './TableHeader.svelte';
+export { default as TableCell } from './TableCell.svelte';
+
 // Form components
 export {
 	TextInput,

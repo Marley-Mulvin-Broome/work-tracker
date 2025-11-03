@@ -14,7 +14,7 @@
 
 {#if data.user}
 	<!-- Authenticated Layout -->
-	<div class="min-h-screen bg-gray-50">
+	<div class="min-h-screen bg-gray-50 dark:bg-gray-950">
 		<!-- Navigation -->
 		<Navigation username={data.user.username} isAdmin={data.user.isAdmin} />
 

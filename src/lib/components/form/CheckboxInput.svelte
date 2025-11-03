@@ -18,9 +18,9 @@
 		{name}
 		{checked}
 		{value}
-		class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+		class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-blue-500 dark:focus:ring-blue-400"
 	/>
-	<label for={id} class="ml-2 block text-sm text-gray-700">
+	<label for={id} class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
 		{label}
 	</label>
 </div>

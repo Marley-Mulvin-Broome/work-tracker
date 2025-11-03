@@ -29,10 +29,10 @@
 </script>
 
 <div>
-	<label for={id} class="block text-sm font-medium text-gray-700">
+	<label for={id} class="block text-sm font-medium text-gray-700 dark:text-gray-300">
 		{label}
 		{#if required}
-			<span class="text-red-500">*</span>
+			<span class="text-red-500 dark:text-red-400">*</span>
 		{/if}
 	</label>
 	<div class="relative mt-1">
@@ -46,13 +46,13 @@
 			{maxlength}
 			class="block w-full px-3 py-2 {showToggle
 				? 'pr-10'
-				: ''} rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none {className}"
+				: ''} rounded-md border border-gray-300 bg-white text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400 {className}"
 		/>
 		{#if showToggle}
 			<button
 				type="button"
 				onclick={() => (showPassword = !showPassword)}
-				class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
+				class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none dark:text-gray-400 dark:hover:text-gray-300"
 				aria-label={showPassword ? 'Hide password' : 'Show password'}
 			>
 				{#if showPassword}

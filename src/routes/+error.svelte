@@ -32,15 +32,22 @@
 </script>
 
 <div
-	class="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 px-4"
+	class="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 px-4 dark:from-gray-900 dark:to-gray-950"
 >
 	<div class="w-full max-w-2xl">
 		<!-- Error Card -->
-		<div class="rounded-2xl bg-white p-8 shadow-xl md:p-12">
+		<div class="rounded-2xl bg-white p-8 shadow-xl md:p-12 dark:bg-gray-800 dark:shadow-gray-900">
 			<!-- Status Code -->
 			<div class="mb-8 text-center">
-				<div class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
-					<svg class="h-10 w-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div
+					class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-950"
+				>
+					<svg
+						class="h-10 w-10 text-red-600 dark:text-red-400"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -49,15 +56,21 @@
 						/>
 					</svg>
 				</div>
-				<h1 class="mb-2 text-6xl font-bold text-slate-800">{status}</h1>
-				<h2 class="mb-3 text-2xl font-semibold text-slate-700">{errorInfo.title}</h2>
-				<p class="text-lg text-slate-600">{errorInfo.description}</p>
+				<h1 class="mb-2 text-6xl font-bold text-slate-800 dark:text-gray-100">{status}</h1>
+				<h2 class="mb-3 text-2xl font-semibold text-slate-700 dark:text-gray-200">
+					{errorInfo.title}
+				</h2>
+				<p class="text-lg text-slate-600 dark:text-gray-400">{errorInfo.description}</p>
 			</div>
 
 			<!-- Development Error Details -->
 			{#if isDevelopment && page.error}
-				<div class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-4">
-					<h3 class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700">
+				<div
+					class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-gray-700 dark:bg-gray-900"
+				>
+					<h3
+						class="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-gray-300"
+					>
 						<svg
 							width={16}
 							height={16}
@@ -76,7 +89,7 @@
 						Error Details (Development Only)
 					</h3>
 					<pre
-						class="overflow-x-auto font-mono text-xs wrap-break-word whitespace-pre-wrap text-slate-600">{page
+						class="overflow-x-auto font-mono text-xs wrap-break-word whitespace-pre-wrap text-slate-600 dark:text-gray-400">{page
 							.error?.message || String(page.error)}</pre>
 				</div>
 			{/if}
@@ -85,7 +98,7 @@
 			<div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
 				<button
 					onclick={() => window.history.back()}
-					class="flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-6 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-200"
+					class="flex items-center justify-center gap-2 rounded-lg bg-slate-100 px-6 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
 				>
 					<svg
 						width={20}
@@ -106,7 +119,7 @@
 				</button>
 				<a
 					href={resolve('/')}
-					class="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700"
+					class="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
 				>
 					<svg
 						width={20}
@@ -128,15 +141,15 @@
 			</div>
 
 			<!-- Help Text -->
-			<div class="mt-8 border-t border-slate-200 pt-6 text-center">
-				<p class="text-sm text-slate-500">
+			<div class="mt-8 border-t border-slate-200 pt-6 text-center dark:border-gray-700">
+				<p class="text-sm text-slate-500 dark:text-gray-400">
 					If this problem persists, please contact your administrator or try refreshing the page.
 				</p>
 			</div>
 		</div>
 
 		<!-- Additional Info -->
-		<div class="mt-6 text-center text-sm text-slate-600">
+		<div class="mt-6 text-center text-sm text-slate-600 dark:text-gray-400">
 			<p>Error occurred at {new Date().toLocaleString()}</p>
 		</div>
 	</div>

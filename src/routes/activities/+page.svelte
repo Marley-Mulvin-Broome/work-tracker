@@ -11,7 +11,11 @@
 		DateInput,
 		RadioGroup,
 		TimeInput,
-		NumberInput
+		NumberInput,
+		Table,
+		TableRow,
+		TableHeader,
+		TableCell
 	} from '$lib/components';
 	import { getTodayJST, isTodayJST } from '$lib/utils/timezone';
 
@@ -61,8 +65,8 @@
 	<!-- Header -->
 	<div class="mb-8 flex items-center justify-between">
 		<div>
-			<h1 class="text-3xl font-bold text-gray-900">Activities</h1>
-			<p class="mt-1 text-gray-600">Manage your work activities</p>
+			<h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Activities</h1>
+			<p class="mt-1 text-gray-600 dark:text-gray-400">Manage your work activities</p>
 		</div>
 		<Button onclick={openCreateModal} class="flex items-center gap-2">
 			<Plus class="h-5 w-5" />
@@ -71,12 +75,14 @@
 	</div>
 
 	<!-- Activities List -->
-	<div class="overflow-hidden rounded-lg bg-white shadow">
-		{#if data.activities.length === 0}
-			<div class="px-6 py-12 text-center">
-				<Clipboard class="mx-auto h-12 w-12 text-gray-400" />
-				<h3 class="mt-2 text-sm font-medium text-gray-900">No activities</h3>
-				<p class="mt-1 text-sm text-gray-500">Get started by creating a new activity.</p>
+	<Table data={data.activities} emptyMessage="">
+		{#snippet emptyIcon()}
+			<div class="flex flex-col items-center">
+				<Clipboard class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+				<h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">No activities</h3>
+				<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+					Get started by creating a new activity.
+				</p>
 				<div class="mt-6">
 					<Button onclick={openCreateModal} class="inline-flex items-center">
 						<Plus class="mr-2 h-5 w-5" />
@@ -84,90 +90,65 @@
 					</Button>
 				</div>
 			</div>
-		{:else}
-			<table class="min-w-full divide-y divide-gray-200">
-				<thead class="bg-gray-50">
-					<tr>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-						>
-							Date
-						</th>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-						>
-							Activity
-						</th>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-						>
-							Time
-						</th>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-						>
-							Duration
-						</th>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-						>
-							Actions
-						</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-gray-200 bg-white">
-					{#each data.activities as activity (activity.id)}
-						<tr class="hover:bg-gray-50">
-							<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-								{formatDate(activity.date)}
-							</td>
-							<td class="px-6 py-4 text-sm text-gray-900">
-								<div class="font-medium">{activity.name}</div>
-								{#if activity.description}
-									<div class="mt-1 text-xs text-gray-500">{activity.description}</div>
-								{/if}
-							</td>
-							<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-								{#if activity.startTime || activity.endTime}
-									<div>{formatTime(activity.startTime)} - {formatTime(activity.endTime)}</div>
-								{:else}
-									<div class="text-gray-400">No specific time</div>
-								{/if}
-							</td>
-							<td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-								{formatHours(activity.duration)}
-							</td>
-							<td class="space-x-2 px-6 py-4 text-sm font-medium whitespace-nowrap">
-								{#if canEdit(activity.date)}
-									<Button variant="text" size="sm" onclick={() => openEditModal(activity)}>
-										Edit
-									</Button>
-									<form method="post" action="?/delete" use:enhance class="inline">
-										<input type="hidden" name="id" value={activity.id} />
-										<Button
-											variant="text"
-											size="sm"
-											type="submit"
-											class="text-red-600 hover:text-red-900"
-											onclick={(e) => {
-												if (!confirm('Are you sure you want to delete this activity?')) {
-													e.preventDefault();
-												}
-											}}
-										>
-											Delete
-										</Button>
-									</form>
-								{:else}
-									<span class="text-gray-400">-</span>
-								{/if}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		{/if}
-	</div>
+		{/snippet}
+
+		{#snippet headerSnippet()}
+			<tr>
+				<TableHeader>Date</TableHeader>
+				<TableHeader>Activity</TableHeader>
+				<TableHeader>Time</TableHeader>
+				<TableHeader>Duration</TableHeader>
+				<TableHeader>Actions</TableHeader>
+			</tr>
+		{/snippet}
+
+		{#snippet rowSnippet(activity)}
+			<TableRow>
+				<TableCell class="whitespace-nowrap text-gray-900 dark:text-gray-100">
+					{formatDate(activity.date)}
+				</TableCell>
+				<TableCell class="text-gray-900 dark:text-gray-100">
+					<div class="font-medium">{activity.name}</div>
+					{#if activity.description}
+						<div class="mt-1 text-xs text-gray-500 dark:text-gray-400">{activity.description}</div>
+					{/if}
+				</TableCell>
+				<TableCell class="whitespace-nowrap text-gray-500 dark:text-gray-400">
+					{#if activity.startTime || activity.endTime}
+						<div>{formatTime(activity.startTime)} - {formatTime(activity.endTime)}</div>
+					{:else}
+						<div class="text-gray-400 dark:text-gray-500">No specific time</div>
+					{/if}
+				</TableCell>
+				<TableCell class="font-medium whitespace-nowrap text-gray-900 dark:text-gray-100">
+					{formatHours(activity.duration)}
+				</TableCell>
+				<TableCell class="space-x-2 font-medium whitespace-nowrap">
+					{#if canEdit(activity.date)}
+						<Button variant="text" size="sm" onclick={() => openEditModal(activity)}>Edit</Button>
+						<form method="post" action="?/delete" use:enhance class="inline">
+							<input type="hidden" name="id" value={activity.id} />
+							<Button
+								variant="text"
+								size="sm"
+								type="submit"
+								class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+								onclick={(e) => {
+									if (!confirm('Are you sure you want to delete this activity?')) {
+										e.preventDefault();
+									}
+								}}
+							>
+								Delete
+							</Button>
+						</form>
+					{:else}
+						<span class="text-gray-400 dark:text-gray-500">-</span>
+					{/if}
+				</TableCell>
+			</TableRow>
+		{/snippet}
+	</Table>
 </div>
 
 <!-- Modal -->
@@ -178,7 +159,7 @@
 		>
 			<!-- Background overlay -->
 			<button
-				class="bg-opacity-75 fixed inset-0 bg-gray-500 transition-opacity"
+				class="bg-opacity-75 dark:bg-opacity-80 fixed inset-0 bg-gray-500 transition-opacity dark:bg-gray-900"
 				onclick={closeModal}
 				aria-label="Close modal"
 			></button>
@@ -186,16 +167,16 @@
 			<span class="hidden sm:inline-block sm:h-screen sm:align-middle">&#8203;</span>
 
 			<div
-				class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
+				class="inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle dark:bg-gray-800 dark:shadow-gray-900"
 			>
 				<form
 					method="post"
 					action={editingActivity ? '?/update' : '?/create'}
 					use:enhance
-					class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4"
+					class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-800"
 				>
 					<div class="mb-6">
-						<h3 class="text-lg leading-6 font-medium text-gray-900">
+						<h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
 							{editingActivity ? 'Edit Activity' : 'Create Activity'}
 						</h3>
 					</div>

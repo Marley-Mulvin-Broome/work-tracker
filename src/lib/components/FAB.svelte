@@ -24,7 +24,7 @@
 	};
 
 	const buttonClasses = $derived(
-		`fixed ${positionClasses[position]} bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all hover:scale-110 z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer ${classes}`.trim()
+		`fixed ${positionClasses[position]} bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-full p-4 shadow-lg dark:shadow-gray-900 transition-all hover:scale-110 z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 focus:ring-blue-500 cursor-pointer ${classes}`.trim()
 	);
 </script>
 

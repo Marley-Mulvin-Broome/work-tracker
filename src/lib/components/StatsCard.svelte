@@ -18,11 +18,11 @@
 	);
 
 	const colorClasses = {
-		blue: 'bg-blue-100 text-blue-600',
-		green: 'bg-green-100 text-green-600',
-		purple: 'bg-purple-100 text-purple-600',
-		orange: 'bg-orange-100 text-orange-600',
-		red: 'bg-red-100 text-red-600'
+		blue: 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300',
+		green: 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300',
+		purple: 'bg-purple-100 text-purple-600 dark:bg-purple-900 dark:text-purple-300',
+		orange: 'bg-orange-100 text-orange-600 dark:bg-orange-900 dark:text-orange-300',
+		red: 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300'
 	};
 
 	const icons: Record<string, Component> = {
@@ -35,11 +35,11 @@
 	const IconComponent = $derived(icons[icon]);
 </script>
 
-<div class="rounded-lg bg-white p-6 shadow">
+<div class="rounded-lg bg-white p-6 shadow dark:bg-gray-800 dark:shadow-gray-900">
 	<div class="flex items-center justify-between">
 		<div>
-			<p class="text-sm font-medium text-gray-600">{title}</p>
-			<p class="mt-2 text-3xl font-bold text-gray-900">
+			<p class="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
+			<p class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">
 				{displayValue}
 			</p>
 		</div>

@@ -34,14 +34,16 @@
 	<div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
 		<!-- Background overlay -->
 		<button
-			class="bg-opacity-75 fixed inset-0 bg-gray-500 transition-opacity"
+			class="bg-opacity-75 dark:bg-opacity-80 fixed inset-0 bg-gray-500 transition-opacity dark:bg-gray-900"
 			onclick={closeModal}
 			aria-label="Close modal"
 		></button>
 
 		<!-- Modal content wrapper -->
 		<div class="flex min-h-screen items-center justify-center px-4">
-			<div class="relative z-10 w-full max-w-lg rounded-lg bg-white shadow-xl">
+			<div
+				class="relative z-10 w-full max-w-lg rounded-lg bg-white shadow-xl dark:bg-gray-800 dark:shadow-gray-900"
+			>
 				<form
 					method="post"
 					action="/activities?/create"
@@ -56,7 +58,9 @@
 					class="px-4 pt-5 pb-4 sm:p-6"
 				>
 					<div class="mb-6">
-						<h3 class="text-lg leading-6 font-medium text-gray-900">Quick Add Activity</h3>
+						<h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
+							Quick Add Activity
+						</h3>
 					</div>
 
 					<input type="hidden" name="inputMethod" value={inputMethod} />
