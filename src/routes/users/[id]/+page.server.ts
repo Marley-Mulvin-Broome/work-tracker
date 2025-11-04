@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { getUserById } from '$lib/server/services/user.service';
 import { getUserStats } from '$lib/server/services/stats.service';
-import { getRecentActivities } from '$lib/server/services/activity.service';
+import { getRecentActivities, getYearActivityData } from '$lib/server/services/activity.service';
 
 export const load: PageServerLoad = async (event) => {
 	const currentUser = requireUser(event);
@@ -22,11 +22,16 @@ export const load: PageServerLoad = async (event) => {
 	// Get recent activities
 	const recentActivities = await getRecentActivities(userId, 20);
 
+	// Get year activity data for calendar
+	const currentYear = new Date().getFullYear();
+	const yearActivities = await getYearActivityData(userId, currentYear);
+
 	return {
 		currentUser,
 		viewedUser,
 		isOwnProfile: currentUser.id === userId,
 		stats,
-		recentActivities
+		recentActivities,
+		yearActivities
 	};
 };

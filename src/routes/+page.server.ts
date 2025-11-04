@@ -1,7 +1,7 @@
 import { requireUser } from '$lib/server/utils';
 import type { PageServerLoad } from './$types';
 import { getUserStats } from '$lib/server/services/stats.service';
-import { getRecentActivities } from '$lib/server/services/activity.service';
+import { getRecentActivities, getYearActivityData } from '$lib/server/services/activity.service';
 
 export const load: PageServerLoad = async (event) => {
 	const user = requireUser(event);
@@ -12,9 +12,14 @@ export const load: PageServerLoad = async (event) => {
 	// Get recent activities
 	const recentActivities = await getRecentActivities(user.id, 10);
 
+	// Get year activity data for calendar
+	const currentYear = new Date().getFullYear();
+	const yearActivities = await getYearActivityData(user.id, currentYear);
+
 	return {
 		user,
 		stats,
-		recentActivities
+		recentActivities,
+		yearActivities
 	};
 };

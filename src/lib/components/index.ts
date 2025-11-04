@@ -6,6 +6,8 @@ export { default as FAB } from './FAB.svelte';
 export { default as Navigation } from './Navigation.svelte';
 export { default as StatsCard } from './StatsCard.svelte';
 export { default as QuickAddButton } from './QuickAddButton.svelte';
+export { default as UserProfile } from './UserProfile.svelte';
+export { default as ActivityCalendar } from './ActivityCalendar.svelte';
 
 // Table components
 export { default as Table } from './Table.svelte';

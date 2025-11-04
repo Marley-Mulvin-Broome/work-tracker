@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, gte, lte, sql } from 'drizzle-orm';
 import { isTodayJST } from '$lib/server/timezone';
 
 export interface CreateActivityInput {
@@ -112,4 +112,34 @@ export async function deleteActivity(activityId: string) {
  */
 export function isActivityFromToday(activityDate: Date): boolean {
 	return isTodayJST(activityDate);
+}
+
+/**
+ * Get year activity data for calendar visualization
+ * Returns aggregated hours worked per day for a specific year
+ */
+export async function getYearActivityData(userId: string, year: number = new Date().getFullYear()) {
+	const startDate = new Date(year, 0, 1); // January 1st
+	const endDate = new Date(year, 11, 31, 23, 59, 59); // December 31st
+
+	const activities = await db
+		.select({
+			date: table.activity.date,
+			totalHours: sql<number>`SUM(${table.activity.duration})`.as('total_hours')
+		})
+		.from(table.activity)
+		.where(
+			and(
+				eq(table.activity.userId, userId),
+				gte(table.activity.date, startDate),
+				lte(table.activity.date, endDate)
+			)
+		)
+		.groupBy(table.activity.date)
+		.orderBy(table.activity.date);
+
+	return activities.map((activity) => ({
+		date: activity.date,
+		hours: activity.totalHours
+	}));
 }
